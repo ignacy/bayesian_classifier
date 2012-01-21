@@ -49,4 +49,19 @@ class BayesTest < Test::Unit::TestCase
     assert_equal 32, p1.size
   end
 
+  def test_classifying_real_data_spam
+    @bayes.vocabularize(@dataSet)
+    p0, p1, p_belongs =  @bayes.train(@bayes.vectors(@dataSet), @classes)
+    guesed = @bayes.classify(@bayes.matches_vector(["stupid", "garbage"]),
+                             p0, p1, p_belongs)
+    assert_equal 1, guesed
+  end
+
+  def test_classifying_real_data_non_spam
+    @bayes.vocabularize(@dataSet)
+    p0, p1, p_belongs =  @bayes.train(@bayes.vectors(@dataSet), @classes)
+    guesed = @bayes.classify(@bayes.matches_vector(["love", "butterfly"]),
+                             p0, p1, p_belongs)
+    assert_equal 0, guesed
+  end
 end

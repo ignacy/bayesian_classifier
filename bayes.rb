@@ -33,14 +33,18 @@ class Bayes
       p0 << 0
     end
 
-    
-    p1_den, p0_den = 0.0, 0.0
+
+    p1_den, p0_den = 2.0, 2.0
     vectors.each_with_index do |v, i|
       if classes[i] == 1
-        p1[i] += v[i]
+        v.each_with_index do |val, inx|
+          p1[inx] += val
+        end
         p1_den += v.inject(:+)
       else
-        p0[i] += v[i]
+        v.each_with_index do |val, inx|
+          p0[inx] += val
+        end
         p0_den += v.inject(:+)
       end
     end
@@ -54,6 +58,20 @@ class Bayes
     end
 
     return p0_vector, p1_vector, p_belongs
+  end
+
+  def classify(example, p0Vec, p1Vec, pClass1)
+    for_1 = []
+    for_0 = []
+    
+    example.each_with_index do |val, i|
+      for_1[i] = val * p1Vec[i]
+      for_0[i] = val * p0Vec[i]
+    end
+    
+    p1 = for_1.inject(:+) + pClass1
+    p0 = for_0.inject(:+) + 1.0 - pClass1
+    (p1 > p0) ? 1 : 0
   end
 
 end
