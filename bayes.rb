@@ -23,7 +23,7 @@ class Bayes
   end
 
   def train(vectors, classes)
-    p_belongs = classes.inject(:+).to_f / classes.length
+    p_that_belongs = classes.inject(:+).to_f / classes.length
 
     p1, p0 = initialize_probabilities(vectors.first.size)
     p1_total, p0_total = 2.0, 2.0 # for lower bias
@@ -45,7 +45,7 @@ class Bayes
     p1_vector = conditional_probs(p1, p1_total)
     p0_vector = conditional_probs(p0, p0_total)
 
-    return p0_vector, p1_vector, p_belongs
+    return p0_vector, p1_vector, p_that_belongs
   end
 
   def classify(example, p0Vec, p1Vec, pClass1)
