@@ -17,15 +17,36 @@ class BayesTest < Test::Unit::TestCase
 
   def test_makes_unique_vocabulary
     assert_equal ["this", "is", "are", "plums"],
-      @bayes.vocabularize([["this", "is", "are"], ["this", "are", "plums"]])
+    @bayes.vocabularize([["this", "is", "are"], ["this", "are", "plums"]])
   end
 
   def test_matches_against_vocabulary
     @bayes.vocabularize(["this", "this", "is", "something", "huge"])
     text = ["this", "was", "a", "very", "huge", "deal"]
-    assert_equal [1, 0, 0, 0, 1, 0],
-      @bayes.matches_vector(text)
+    assert_equal [1, 0, 0, 1],
+    @bayes.matches_vector(text)
   end
-  
+
+  def test_trains_naive_bayesian_classifier
+    post1 = ["this", "huge", "deal"]
+    post2 = ["offensive", "dick", "penis"]
+    post3 = ["something", "penis", "other"]
+    set = [post1, post2, post3]
+    @bayes.vocabularize(set)
+    classes = [0, 1, 1]
+    p0, p1, p_belongs =  @bayes.train(@bayes.vectors(set), classes)
+
+    assert_equal 2.0/3, p_belongs
+    assert_equal 8, p0.size
+  end
+
+  def test_training_agains_the_main_set
+    @bayes.vocabularize(@dataSet)
+    p0, p1, p_belongs =  @bayes.train(@bayes.vectors(@dataSet), @classes)
+
+    assert_equal 0.5, p_belongs
+    assert_equal 32, p0.size
+    assert_equal 32, p1.size
+  end
 
 end
