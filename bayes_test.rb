@@ -13,20 +13,20 @@ class BayesTest < Test::Unit::TestCase
                ]
     @classes = [0, 1, 0, 1, 0, 1] # 1 spam, 0 not spam
     @bayes = Bayes.new
-    @bayes.vocabularize(@dataSet)
+    @bayes.create_dictionary(@dataSet)
     @p0, @p1, @p_belongs =  @bayes.train(@bayes.vectors(@dataSet), @classes)
   end
 
   def test_makes_unique_vocabulary
     assert_equal ["this", "is", "are", "plums"],
-    @bayes.vocabularize([["this", "is", "are"], ["this", "are", "plums"]])
+    @bayes.create_dictionary([["this", "is", "are"], ["this", "are", "plums"]])
   end
 
   def test_matches_against_vocabulary
-    @bayes.vocabularize(["this", "this", "is", "something", "huge"])
+    @bayes.create_dictionary(["this", "this", "is", "something", "huge"])
     text = ["this", "was", "a", "very", "huge", "deal"]
     assert_equal [1, 0, 0, 1],
-    @bayes.matches_vector(text)
+    @bayes.words_in_the_dictionary(text)
   end
 
   def test_trains_naive_bayesian_classifier
@@ -34,7 +34,7 @@ class BayesTest < Test::Unit::TestCase
     post2 = ["offensive", "dick", "penis"]
     post3 = ["something", "penis", "other"]
     set = [post1, post2, post3]
-    @bayes.vocabularize(set)
+    @bayes.create_dictionary(set)
     classes = [0, 1, 1]
     p0, p1, p_belongs =  @bayes.train(@bayes.vectors(set), classes)
     assert_equal 2.0/3, p_belongs
@@ -42,13 +42,13 @@ class BayesTest < Test::Unit::TestCase
   end
 
   def test_classifying_real_data_spam
-    guesed = @bayes.classify(@bayes.matches_vector(["stupid", "garbage"]),
+    guesed = @bayes.classify(@bayes.words_in_the_dictionary(["stupid", "garbage"]),
                              @p0, @p1, @p_belongs)
     assert_equal 1, guesed
   end
 
   def test_classifying_real_data_non_spam
-    guesed = @bayes.classify(@bayes.matches_vector(["love", "butterfly"]),
+    guesed = @bayes.classify(@bayes.words_in_the_dictionary(["love", "butterfly"]),
                              @p0, @p1, @p_belongs)
     assert_equal 0, guesed
   end

@@ -1,24 +1,25 @@
 class Bayes
-  attr_accessor :vocabulary
+  attr_accessor :dictionary
 
-  def vocabularize(set)
-    @vocabulary = set.flatten.uniq
+  # Creates a set of unique terms out of given :array(s): of words
+  def create_dictionary(array)
+    @dictionary = array.flatten.uniq
   end
 
-  def matches_vector(text)
-    matches = []
-    @vocabulary.size.times { matches << 0 }
-    text.each do |word|
-      if @vocabulary.include?(word)
-        matches[@vocabulary.index(word)] = 1
-      end
+  # Returns an array of 0 and 1. For every index of returned
+  # array 0 means that the word at the same index of :words: array
+  # is not present in the dictionary set and 1 means it is present.
+  def words_in_the_dictionary(words)
+    matches = Array.new(@dictionary.size) { 0 } # initialize with 0
+    words.each do |word|
+      matches[@dictionary.index(word)] = 1 if @dictionary.include?(word)
     end
     matches
   end
 
   def vectors(set)
     vectors = set.each.inject([]) do |vectors, post|
-      vectors << matches_vector(post)
+      vectors << words_in_the_dictionary(post)
     end
   end
 
