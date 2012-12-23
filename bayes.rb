@@ -1,3 +1,9 @@
+class Array
+  def sum
+    self.inject(:+)
+  end
+end
+
 class Bayes
   attr_accessor :dictionary
 
@@ -24,7 +30,7 @@ class Bayes
   end
 
   def train(vectors, classes)
-    p_that_belongs = classes.inject(:+).to_f / classes.length
+    p_that_belongs = classes.sum.to_f / classes.length
 
     p1, p0 = initialize_probabilities(vectors.first.size)
     p1_total, p0_total = 2.0, 2.0 # for lower bias
@@ -34,12 +40,12 @@ class Bayes
         v.each_with_index do |val, inx|
           p1[inx] += val
         end
-        p1_total += v.inject(:+)
+        p1_total += v.sum
       else
         v.each_with_index do |val, inx|
           p0[inx] += val
         end
-        p0_total += v.inject(:+)
+        p0_total += v.sum
       end
     end
 
@@ -58,8 +64,8 @@ class Bayes
       for_0[i] = val * p0Vec[i]
     end
 
-    p1 = for_1.inject(:+) + pClass1
-    p0 = for_0.inject(:+) + 1.0 - pClass1
+    p1 = for_1.sum + pClass1
+    p0 = for_0.sum + 1.0 - pClass1
     (p1 > p0) ? 1 : 0
   end
 
