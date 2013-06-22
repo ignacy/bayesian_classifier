@@ -49,8 +49,8 @@ class Bayes
   end
 
   def train
-    size                = vectors.first.size
-    class_probabilities = [Array.new(size) {0}, Array.new(size) {0}]
+    class_probabilities = [Array.new(longest_vector_size) {0},
+                           Array.new(longest_vector_size) {0}]
     class_totals        = [2.0, 2.0] # for lower bias
 
     # For evary vector if it belongs to class[i]
@@ -99,5 +99,9 @@ class Bayes
     matches.inject([]) do |result, value|
       result << (value.to_f / items_sum)
     end
+  end
+
+  def longest_vector_size
+    vectors.max_by(&:size).size
   end
 end
