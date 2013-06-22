@@ -49,8 +49,8 @@ class Bayes
   end
 
   def train
-    class_probabilities = [Array.new(longest_vector_size) {0},
-                           Array.new(longest_vector_size) {0}]
+    class_probabilities = [array_with_zeros_of(longest_vector_size),
+                           array_with_zeros_of(longest_vector_size)]
     class_totals        = [2.0, 2.0] # for lower bias
 
     # For evary vector if it belongs to class[i]
@@ -103,5 +103,9 @@ class Bayes
 
   def longest_vector_size
     vectors.max_by(&:size).size
+  end
+
+  def array_with_zeros_of(size)
+    Array.new(size) {0}
   end
 end
