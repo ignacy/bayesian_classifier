@@ -14,7 +14,8 @@ class BayesTest < Test::Unit::TestCase
     @classes = [0, 1, 0, 1, 0, 1] # 1 spam, 0 not spam
     @bayes = Bayes.new
     @bayes.dictionary = @dataSet
-    @p0, @p1, @p_belongs =  @bayes.train(@bayes.vectors(@dataSet), @classes)
+    @bayes.vectors = @dataSet
+    @p0, @p1, @p_belongs =  @bayes.train(@classes)
   end
 
   def test_makes_unique_vocabulary
@@ -25,8 +26,7 @@ class BayesTest < Test::Unit::TestCase
   def test_matches_against_vocabulary
     @bayes.dictionary = ["this", "this", "is", "something", "huge"]
     text = ["this", "was", "a", "very", "huge", "deal"]
-    assert_equal [1, 0, 0, 1],
-    @bayes.words_in_the_dictionary(text)
+    assert_equal [1, 0, 0, 1], @bayes.words_in_the_dictionary(text)
   end
 
   def test_trains_naive_bayesian_classifier
@@ -36,7 +36,8 @@ class BayesTest < Test::Unit::TestCase
     set = [post1, post2, post3]
     @bayes.dictionary = set
     classes = [0, 1, 1]
-    p0, p1, p_belongs =  @bayes.train(@bayes.vectors(set), classes)
+    @bayes.vectors = set
+    p0, p1, p_belongs =  @bayes.train(classes)
     assert_equal 2.0/3, p_belongs
     assert_equal 8, p0.size
   end

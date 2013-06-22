@@ -5,9 +5,8 @@ class Array
 end
 
 class Bayes
-  attr_accessor :dictionary
+  attr_reader :dictionary, :vectors
 
-  # Creates a set of unique terms out of given :array(s): of words
   def dictionary=(array)
     @dictionary = array.flatten.uniq
   end
@@ -23,13 +22,16 @@ class Bayes
     matches
   end
 
-  def vectors(set)
-    set.each.inject([]) do |vectors, post|
+  # Given a set of texts creates a vector of 1 and 0 for
+  # each element of the set, where 1 means that given
+  # word is in dictionary and 0 means it's is not.
+  def vectors=(set)
+    @vectors = set.each.inject([]) do |vectors, post|
       vectors << words_in_the_dictionary(post)
     end
   end
 
-  def train(vectors, classes)
+  def train(classes)
     p_that_belongs = classes.sum.to_f / classes.length
 
     p1, p0 = initialize_probabilities(vectors.first.size)
