@@ -8,7 +8,7 @@ class Bayes
   attr_accessor :dictionary
 
   # Creates a set of unique terms out of given :array(s): of words
-  def create_dictionary(array)
+  def dictionary=(array)
     @dictionary = array.flatten.uniq
   end
 

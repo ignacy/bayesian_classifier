@@ -13,17 +13,17 @@ class BayesTest < Test::Unit::TestCase
                ]
     @classes = [0, 1, 0, 1, 0, 1] # 1 spam, 0 not spam
     @bayes = Bayes.new
-    @bayes.create_dictionary(@dataSet)
+    @bayes.dictionary = @dataSet
     @p0, @p1, @p_belongs =  @bayes.train(@bayes.vectors(@dataSet), @classes)
   end
 
   def test_makes_unique_vocabulary
-    assert_equal ["this", "is", "are", "plums"],
-    @bayes.create_dictionary([["this", "is", "are"], ["this", "are", "plums"]])
+    @bayes.dictionary = [["this", "is", "are"], ["this", "are", "plums"]]
+    assert_equal ["this", "is", "are", "plums"], @bayes.dictionary
   end
 
   def test_matches_against_vocabulary
-    @bayes.create_dictionary(["this", "this", "is", "something", "huge"])
+    @bayes.dictionary = ["this", "this", "is", "something", "huge"]
     text = ["this", "was", "a", "very", "huge", "deal"]
     assert_equal [1, 0, 0, 1],
     @bayes.words_in_the_dictionary(text)
@@ -34,7 +34,7 @@ class BayesTest < Test::Unit::TestCase
     post2 = ["offensive", "dick", "penis"]
     post3 = ["something", "penis", "other"]
     set = [post1, post2, post3]
-    @bayes.create_dictionary(set)
+    @bayes.dictionary = set
     classes = [0, 1, 1]
     p0, p1, p_belongs =  @bayes.train(@bayes.vectors(set), classes)
     assert_equal 2.0/3, p_belongs
