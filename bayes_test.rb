@@ -1,7 +1,7 @@
-require 'test/unit'
+require 'minitest/autorun'
 require_relative 'bayes'
 
-class BayesTest < Test::Unit::TestCase
+class BayesTest < MiniTest::Unit::TestCase
   def setup_full_test
     @dataSet = [
                 ['my', 'dog', 'has', 'flea', 'problems', 'help', 'please'],

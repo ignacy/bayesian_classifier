@@ -37,7 +37,7 @@ class Bayes
   end
 
   # Returns an array of 0 and 1. For every index of returned
-  # array 0 means that the word at the same index of :words: array
+  # array 0 means that the word at the same index of +words+:: array
   # is not present in the dictionary set and 1 means it is present.
   def words_in_the_dictionary(words)
     matches = Array.new(dictionary.size) { 0 } # initialize with 0
