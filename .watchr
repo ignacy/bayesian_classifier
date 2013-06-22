@@ -1,1 +1,0 @@
-watch( '(.*)\.rb' ) { |md| system("ruby bayes_test.rb") }
