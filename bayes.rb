@@ -32,10 +32,8 @@ class Bayes
   # +classes+:: list of N classes that correspond to postions in vector
   def initialize(dictionary, vectors, classes)
     @dictionary = dictionary.flatten.uniq
-    @vectors = vectors.each.inject([]) do |vs, post|
-      vs << words_in_the_dictionary(post)
-    end
-    @classes = classes
+    @vectors    = build_vectors(vectors)
+    @classes    = classes
   end
 
   # Returns an array of 0 and 1. For every index of returned
@@ -90,6 +88,12 @@ class Bayes
   end
 
   private
+
+  def build_vectors(data)
+    data.each.inject([]) do |vs, post|
+      vs << words_in_the_dictionary(post)
+    end
+  end
 
   def initialize_probabilities(size)
     spam, no_spam = [], []
