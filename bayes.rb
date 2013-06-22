@@ -24,7 +24,7 @@ class Bayes
   end
 
   def vectors(set)
-    vectors = set.each.inject([]) do |vectors, post|
+    set.each.inject([]) do |vectors, post|
       vectors << words_in_the_dictionary(post)
     end
   end
