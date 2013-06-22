@@ -5,7 +5,8 @@ class Array
 end
 
 class Bayes
-  attr_reader :dictionary, :vectors, :classes
+  attr_reader :dictionary, :vectors, :classes,
+    :probability_that_belongs_to_class
 
   # Creates new Bayesian clasiffier.
   #
@@ -48,32 +49,27 @@ class Bayes
   end
 
   def train
-    p_that_belongs = classes.sum.to_f / classes.length
+    size                = vectors.first.size
+    class_probabilities = [Array.new(size) {0}, Array.new(size) {0}]
+    class_totals        = [2.0, 2.0] # for lower bias
 
-    p1, p0 = initialize_probabilities(vectors.first.size)
-    p1_total, p0_total = 2.0, 2.0 # for lower bias
-
+    # For evary vector if it belongs to class[i]
+    # then increase count of word at this position[i],
+    # and total count of words in the class
     vectors.each_with_index do |v, i|
-      if classes[i] == 1
-        v.each_with_index do |val, inx|
-          p1[inx] += val
-        end
-        p1_total += v.sum
-      else
-        v.each_with_index do |val, inx|
-          p0[inx] += val
-        end
-        p0_total += v.sum
+      v.each_with_index do |val, inx|
+        class_probabilities[classes[i]][inx] += val
       end
+      class_totals[classes[i]] += v.sum
     end
 
-    p1_vector = conditional_probs(p1, p1_total)
-    p0_vector = conditional_probs(p0, p0_total)
+    p1_vector = conditional_probs(class_probabilities[1], class_totals[1])
+    p0_vector = conditional_probs(class_probabilities[0], class_totals[0])
 
-    return p0_vector, p1_vector, p_that_belongs
+    return p0_vector, p1_vector
   end
 
-  def classify(example, p0Vec, p1Vec, pClass1)
+  def classify(example, p0Vec, p1Vec)
     for_1 = []
     for_0 = []
 
@@ -82,9 +78,13 @@ class Bayes
       for_0[i] = val * p0Vec[i]
     end
 
-    p1 = for_1.sum + pClass1
-    p0 = for_0.sum + 1.0 - pClass1
+    p1 = for_1.sum + probability_that_belongs_to_class
+    p0 = for_0.sum + 1.0 - probability_that_belongs_to_class
     (p1 > p0) ? 1 : 0
+  end
+
+  def probability_that_belongs_to_class
+    @probability_that_belongs_to_class ||= (classes.sum.to_f / classes.length)
   end
 
   private
@@ -95,16 +95,9 @@ class Bayes
     end
   end
 
-  def initialize_probabilities(size)
-    spam, no_spam = [], []
-    size.times { spam << 0; no_spam << 0 }
-    return spam, no_spam
-  end
-
   def conditional_probs(matches, items_sum)
     matches.inject([]) do |result, value|
       result << (value.to_f / items_sum)
     end
   end
-
 end

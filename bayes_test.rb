@@ -13,7 +13,7 @@ class BayesTest < MiniTest::Unit::TestCase
                ]
 
     @bayes = Bayes.new(@dataSet, @dataSet, [0, 1, 0, 1, 0, 1])
-    @p0, @p1, @p_belongs =  @bayes.train
+    @p0, @p1 = @bayes.train
   end
 
   def test_makes_unique_vocabulary
@@ -22,10 +22,12 @@ class BayesTest < MiniTest::Unit::TestCase
     assert_equal ["this", "is", "are", "plums"], bayes.dictionary
   end
 
-  def test_matches_against_vocabulary
-    dict = [["this", "this", "is", "something", "huge"]]
+  def test_that_words_in_the_dictionary_matches_dictionary
+    dict = [["THIS", "THIS", "is", "something", "HUGE"]]
     bayes = Bayes.new dict, dict, []
-    text = ["this", "was", "a", "very", "huge", "deal"]
+
+    text = ["THIS", "was", "a", "very", "HUGE", "deal"]
+
     assert_equal [1, 0, 0, 1], bayes.words_in_the_dictionary(text)
   end
 
@@ -36,23 +38,24 @@ class BayesTest < MiniTest::Unit::TestCase
     set = [post1, post2, post3]
 
     bayes = Bayes.new(set, set, [0, 1, 1])
-    p0, p1, p_belongs =  bayes.train
-    assert_equal 2.0/3, p_belongs
-    assert_equal 8, p0.size
+    p0, p1 =  bayes.train
+
+    assert_equal 2.0/3, bayes.probability_that_belongs_to_class
+    assert_equal [0.2, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0], p0
     assert_equal [0.0, 0.0, 0.0, 0.125, 0.125, 0.25, 0.125, 0.125], p1
   end
 
   def test_classifying_real_data_spam
     setup_full_test
     guesed = @bayes.classify(@bayes.words_in_the_dictionary(["stupid", "garbage"]),
-                             @p0, @p1, @p_belongs)
+                             @p0, @p1)
     assert_equal 1, guesed
   end
 
   def test_classifying_real_data_non_spam
     setup_full_test
     guesed = @bayes.classify(@bayes.words_in_the_dictionary(["love", "butterfly"]),
-                             @p0, @p1, @p_belongs)
+                             @p0, @p1)
     assert_equal 0, guesed
   end
 end
